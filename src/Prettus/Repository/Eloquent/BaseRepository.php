@@ -527,6 +527,34 @@ abstract class BaseRepository implements RepositoryInterface, RepositoryCriteria
         $this->resetModel();
         return $this->parserResult( $results );
     }
+    
+    /**
+     * Find data by multiple Criterias
+     *
+     * @param array $criterias
+     * @return mixed
+     * @public param \Prettus\Repository\Contracts\CriteriaInterface[] $criteria
+     */
+    public function getByAdditionalCriterias(array $criterias)
+    {
+        $current_criteria = $this->getCriteria();
+        if ( $current_criteria ) {
+            foreach ($current_criteria as $c) {
+                if ( $c instanceof CriteriaInterface ) {
+                    $this->model = $c->apply($this->model, $this);
+                }
+            }
+        }
+        foreach($criterias as $c)
+        {
+            if ( $c instanceof CriteriaInterface ) {
+                $this->model = $c->apply($this->model, $this);
+            }
+        }
+        $results = $this->model->get();
+        $this->resetModel();
+        return $this->parserResult( $results );
+    }
 
     /**
      * Skip Criteria
