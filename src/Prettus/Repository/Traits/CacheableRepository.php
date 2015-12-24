@@ -265,4 +265,28 @@ trait CacheableRepository {
 
         return $value;
     }
+    
+    /**
+     * Find data by multiple Criterias
+     *
+     * @param array $criterias
+     * @return mixed
+     * @public param \Prettus\Repository\Contracts\CriteriaInterface[] $criteria
+     */
+    public function getByAdditionalCriterias(array $criterias)
+    {
+        /*
+        if ( !$this->allowedCache('getByAdditionalCriterias') || $this->isSkippedCache() ){
+            return parent::getByAdditionalCriterias($criteria);
+        }
+        */
+
+        $key     = $this->getCacheKey('getByAdditionalCriterias', func_get_args());
+        $minutes = $this->getCacheMinutes();
+        $value   = $this->getCacheRepository()->remember($key, $minutes, function() use($criterias) {
+            return parent::getByAdditionalCriterias($criterias);
+        });
+
+        return $value;
+    }
 }
